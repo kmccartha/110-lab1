@@ -74,11 +74,11 @@ export class LemonadeStand {
 
     getInventory(): string {
         return `
-Cups: ${this.cups}
-Ice: ${this.ice}
-Lemons: ${this.lemons}
-Sugar: ${this.sugar}
-Cash: $${this.cash.toFixed(2)}
-`;
+        Cups: ${this.cups}
+        Ice: ${this.ice}
+        Lemons: ${this.lemons}
+        Sugar: ${this.sugar}
+        
+        `;
     }
 }
