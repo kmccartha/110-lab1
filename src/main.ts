@@ -1,10 +1,9 @@
-import { createInterface } from "node:readline/promises";
-import { stdin as input, stdout as output } from "node:process";
+import { createInterface } from "readline/promises";
 import { LemonadeStand } from "./LemonadeStand";
 
 const rl = createInterface({
-    input,
-    output
+    input: process.stdin,
+    output: process.stdout
 });
 
 const stand = new LemonadeStand();
@@ -15,18 +14,19 @@ async function main() {
     for (let day = 1; day <= 7; day++) {
         console.log(`\n===== DAY ${day} =====`);
 
-        const temperature = Math.floor(Math.random() * 31) + 60;
+        const options = ["hot", "good weather", "cold"];
+        const temperature = options[Math.floor(Math.random() * options.length)];
+        console.log(`Today's weather is ${temperature}.`);
 
-        console.log(`Today's temperature is ${temperature}°F.`);
-
-        let cupsSold: number;
-
-        if (temperature >= 85) {
-            cupsSold = Math.floor(Math.random() * 11) + 10;
-        } else if (temperature >= 75) {
-            cupsSold = Math.floor(Math.random() * 6) + 5;
-        } else {
-            cupsSold = Math.floor(Math.random() * 4) + 2;
+        let cupsSold;
+        if (temperature === "hot") {
+            cupsSold = Math.floor(Math.random() * 11) + 10;   // 10-20 cups
+        }
+        else if (temperature === "good weather") {
+            cupsSold = Math.floor(Math.random() * 6) + 5;     // 5-10 cups
+        }
+        else {
+        cupsSold = Math.floor(Math.random() * 4) + 2;     // 2-5 cups
         }
 
         const cupPrice = Math.floor(Math.random() * 3) + 1;
