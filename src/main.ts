@@ -1,37 +1,82 @@
-import * as readline from "readline";
+import { createInterface } from "node:readline/promises";
+import { stdin as input, stdout as output } from "node:process";
+import { LemonadeStand } from "./LemonadeStand";
 
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
+const rl = createInterface({
+    input,
+    output
 });
 
-let money: number = 20;
-let lemonade: number = 10;
-let price: number = 1;
+const stand = new LemonadeStand();
 
-console.log("Welcome to the Lemonade Stand");
-console.log("You have $" + money);
-console.log("You have " + lemonade + " cups of lemonade");
-rl.question("How much do you want to charge per cup? ", (answer) => {
-    price = Number(answer);
+async function main() {
+    console.log("Welcome to the Lemonade Stand Game!");
 
-    console.log("You are charging $" + price + " per cup.");
+    for (let day = 1; day <= 7; day++) {
+        console.log(`\n===== DAY ${day} =====`);
+
+        const temperature = Math.floor(Math.random() * 31) + 60;
+
+        console.log(`Today's temperature is ${temperature}°F.`);
+
+        let cupsSold: number;
+
+        if (temperature >= 85) {
+            cupsSold = Math.floor(Math.random() * 11) + 10;
+        } else if (temperature >= 75) {
+            cupsSold = Math.floor(Math.random() * 6) + 5;
+        } else {
+            cupsSold = Math.floor(Math.random() * 4) + 2;
+        }
+
+        const cupPrice = Math.floor(Math.random() * 3) + 1;
+        const icePrice = Math.floor(Math.random() * 2) + 1;
+        const lemonPrice = Math.floor(Math.random() * 3) + 1;
+        const sugarPrice = Math.floor(Math.random() * 2) + 1;
+
+        console.log("\nToday's supply prices:");
+        console.log(`Cups: $${cupPrice}`);
+        console.log(`Ice: $${icePrice}`);
+        console.log(`Lemons: $${lemonPrice}`);
+        console.log(`Sugar: $${sugarPrice}`);
+
+        console.log(`\nCurrent cash: $${stand.cash.toFixed(2)}`);
+
+        const cups = Number(await rl.question("How many cups do you want to buy? "));
+        const ice = Number(await rl.question("How much ice do you want to buy? "));
+        const lemons = Number(await rl.question("How many lemons do you want to buy? "));
+        const sugar = Number(await rl.question("How much sugar do you want to buy? "));
+
+        const success = stand.buySupplies(
+            cups,
+            ice,
+            lemons,
+            sugar,
+            cupPrice,
+            icePrice,
+            lemonPrice,
+            sugarPrice
+        );
+
+        if (!success) {
+            console.log("\nYou don't have enough money for those supplies.");
+            console.log("You bought nothing.");
+        } else {
+            console.log("\nSupplies purchased!");
+        }
+
+        const sold = stand.sellCups(cupsSold);
+
+        console.log(`\nYou sold ${sold} cups of lemonade.`);
+
+        console.log("\nRemaining inventory:");
+        console.log(stand.getInventory());
+    }
+
+    console.log("\n===== GAME OVER =====");
+    console.log(`Final cash: $${stand.cash.toFixed(2)}`);
 
     rl.close();
-});
+}
 
-let customers: number = Math.floor(Math.random() * 10) + 1;
-console.log(customers + " customers came to your stand!");
-
-let sold: number = Math.min(customers, lemonade);
-let earnings: number = sold * price;
-money = money + earnings;
-
-lemonade = lemonade - sold;
-
-console.log("You sold " + sold + " cups.");
-console.log("You earned $" + earnings);
-console.log("You now have $" + money);
-console.log("You have " + lemonade + " cups left.");
-
-rl.close();
+main();
